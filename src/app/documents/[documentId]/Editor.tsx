@@ -9,6 +9,7 @@ import TableRow from "@tiptap/extension-table-row";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import ImageResize from "tiptap-extension-resize-image";
+import UnderLine from "@tiptap/extension-underline";
 import { useEditorStore } from "@/store/use-editor-store";
 
 export default function Editor() {
@@ -60,6 +61,7 @@ export default function Editor() {
       TableCell,
       Image,
       ImageResize,
+      UnderLine,
     ],
     content: `
        <table>
