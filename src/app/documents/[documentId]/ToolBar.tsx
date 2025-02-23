@@ -34,6 +34,8 @@ import {
   ListTodoIcon,
   LucideIcon,
   MessageSquarePlusIcon,
+  MinusIcon,
+  PlusIcon,
   PrinterIcon,
   Redo2Icon,
   RemoveFormattingIcon,
@@ -43,8 +45,120 @@ import {
   Undo2Icon,
   UploadIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { ColorResult, SketchPicker } from "react-color";
+
+const FontSizeButton = () => {
+  const { editor } = useEditorStore();
+
+  const currentFontSize = editor?.getAttributes("textStyle").fontSize
+    ? editor?.getAttributes("textStyle").fontSize.replace("px", "")
+    : "16";
+
+  const [fontSize, setFontSize] = useState(currentFontSize);
+  const [inputValue, setInputValue] = useState(fontSize);
+  const [inputEditing, setInputEditing] = useState(false);
+
+  const validSize = (size: string) => {
+    let returnSize = parseInt(size);
+    if (isNaN(returnSize)) {
+      return "";
+    }
+
+    if (returnSize >= 100) {
+      returnSize = 96;
+    }
+
+    return returnSize;
+  };
+
+  const updateFontSize = (newSize: string, focusEditor: boolean = true) => {
+    const size = Number(newSize);
+    if (!isNaN(size) && size > 0 && size < 100) {
+      if (focusEditor) {
+        editor?.chain().focus().setFontSize(`${size}px`).run();
+        setInputEditing(false);
+      } else {
+        editor?.chain().setFontSize(`${size}px`).run();
+      }
+      setFontSize(newSize);
+      setInputValue(newSize);
+    }
+  };
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const size = validSize(e.target.value);
+    setInputValue(size);
+  };
+  const handleInputBur = () => {
+    updateFontSize(inputValue);
+  };
+
+  const handleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const focusEditor = false;
+    if (e.key === "Enter") {
+      e.preventDefault();
+      updateFontSize(inputValue);
+      editor?.commands.focus();
+    }
+    if (e.key === "ArrowUp") {
+      increment(focusEditor);
+    }
+    if (e.key === "ArrowDown") {
+      decrement(focusEditor);
+    }
+  };
+
+  const increment = (focusEditor: boolean = true) => {
+    const newSize = (parseInt(fontSize) || 0) + 1;
+    if (newSize < 100) {
+      updateFontSize(newSize.toString(), focusEditor);
+    }
+  };
+  const decrement = (focusEditor: boolean = true) => {
+    const newSize = parseInt(fontSize) - 1;
+    if (newSize > 0) {
+      updateFontSize(newSize.toString(), focusEditor);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-x-1">
+      <button
+        onClick={() => decrement()}
+        className="w-7 h-7 flex justify-center items-center rounded-sm shrink-0 hover:bg-neutral-200/80"
+      >
+        <MinusIcon className="size-4" />
+      </button>
+      {inputEditing ? (
+        <Input
+          className="w-12 h-7 text-center text-sm flex justify-center items-center border border-neutral-400 rounded-sm shrink-0 bg-transparent"
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyDown={handleKeydown}
+          onBlur={handleInputBur}
+        />
+      ) : (
+        <button
+          onClick={() => {
+            setInputEditing(true);
+            setFontSize(currentFontSize);
+            setInputValue(currentFontSize);
+          }}
+          className="w-12 h-7 text-center text-sm flex justify-center items-center border border-neutral-400 rounded-sm shrink-0 bg-transparent"
+        >
+          {currentFontSize}
+        </button>
+      )}
+
+      <button
+        onClick={() => increment()}
+        className="w-7 h-7 flex justify-center items-center rounded-sm shrink-0 hover:bg-neutral-200/80"
+      >
+        <PlusIcon className="size-4" />
+      </button>
+    </div>
+  );
+};
 
 const ListButton = () => {
   const { editor } = useEditorStore();
@@ -165,7 +279,6 @@ const ImageButton = () => {
         onChange(url);
       }
     };
-    console.log(input);
     input.click();
   };
   const handleImageUrlSubmit = () => {
@@ -550,9 +663,12 @@ export default function ToolBar() {
       <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       <HeadingButton />
       <Separator orientation="vertical" className="h-6 bg-neutral-300" />
+      <FontSizeButton />
+      <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       {sections[1].map((item) => (
         <ToolBarButton key={item.label} {...item} />
       ))}
+      <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       <TextColorButton />
       <HighLightColoButton />
 

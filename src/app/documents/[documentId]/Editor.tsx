@@ -18,6 +18,7 @@ import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
 
 import { useEditorStore } from "@/store/use-editor-store";
+import { FontSizeExtension } from "@/tiptap-extensions/font-size";
 
 export default function Editor() {
   const setEditor = useEditorStore((state) => state.setEditor);
@@ -84,6 +85,7 @@ export default function Editor() {
         defaultAlignment: "left",
         types: ["heading", "paragraph"],
       }),
+      FontSizeExtension,
     ],
     content: `
        <table>
