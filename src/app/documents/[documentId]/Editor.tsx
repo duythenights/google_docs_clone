@@ -14,6 +14,7 @@ import FontFamily from "@tiptap/extension-font-family";
 import TextStyle from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import HighLight from "@tiptap/extension-highlight";
+import Link from "@tiptap/extension-link";
 import { useEditorStore } from "@/store/use-editor-store";
 
 export default function Editor() {
@@ -72,6 +73,11 @@ export default function Editor() {
         multicolor: true,
       }),
       Color,
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        defaultProtocol: "https",
+      }),
     ],
     content: `
        <table>
