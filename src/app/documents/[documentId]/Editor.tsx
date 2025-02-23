@@ -12,6 +12,8 @@ import ImageResize from "tiptap-extension-resize-image";
 import UnderLine from "@tiptap/extension-underline";
 import FontFamily from "@tiptap/extension-font-family";
 import TextStyle from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
+import HighLight from "@tiptap/extension-highlight";
 import { useEditorStore } from "@/store/use-editor-store";
 
 export default function Editor() {
@@ -66,6 +68,10 @@ export default function Editor() {
       UnderLine,
       FontFamily,
       TextStyle,
+      HighLight.configure({
+        multicolor: true,
+      }),
+      Color,
     ],
     content: `
        <table>
